@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.fuicuiedu.xc.videoplayer.R;
+import com.fuicuiedu.xc.videoplayer.full.VideoViewActivity;
 
 import java.io.IOException;
 
@@ -136,7 +137,7 @@ public class SimpleVideoPlayer extends FrameLayout{
             @Override
             public void onClick(View v) {
                 //跳转到全屏播放
-                // TODO: 2017/3/14 0014  跳转到全屏播放
+                VideoViewActivity.open(getContext(),videoPath);
             }
         });
     }
