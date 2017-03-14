@@ -2,6 +2,8 @@ package com.fuicuiedu.xc.videoplayer.part;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,11 +53,11 @@ public class SimpleVideoPlayer extends FrameLayout{
     private ProgressBar progressBar;//进度条
     
     public SimpleVideoPlayer(Context context) {
-        super(context,null);
+        this(context,null);
     }
 
     public SimpleVideoPlayer(Context context, AttributeSet attrs) {
-        super(context, attrs,0);
+        this(context, attrs,0);
     }
 
     public SimpleVideoPlayer(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -200,7 +202,8 @@ public class SimpleVideoPlayer extends FrameLayout{
         btnToggle.setImageResource(R.drawable.ic_pause);
         mediaPlayer.start();
         isPlaying = true;
-        // TODO: 2017/3/14 0014 进度条操作
+        //进度条操作
+        handler.sendEmptyMessage(0);
     }
 
     //暂停播放
@@ -210,8 +213,25 @@ public class SimpleVideoPlayer extends FrameLayout{
         }
         isPlaying = false;
         btnToggle.setImageResource(R.drawable.ic_play_arrow);
-        // TODO: 2017/3/14 0014 进度条操作
+        //进度条操作
+        handler.removeMessages(0);
     }
+
+    //使用handler更新进度条
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            //每0.2秒更新一下进度条
+            if (isPlaying){
+                int progress = (int)(mediaPlayer.getCurrentPosition() *
+                        PROGRESS_MAX / mediaPlayer.getDuration());
+                progressBar.setProgress(progress);
+                //发送一个空的延迟消息，不停的调用本身，实现自动更新进度条
+                handler.sendEmptyMessageDelayed(0,200);
+            }
+        }
+    };
 
     //释放MediaPlayer
     private void releaseMediaPlayer(){

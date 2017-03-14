@@ -7,5 +7,6 @@
     <com.fuicuiedu.xc.videoplayer.part.SimpleVideoPlayer
         android:id="@+id/test_svp"
         android:layout_width="match_parent"
-        android:layout_height="400dp"/>
+        android:layout_height="300dp"
+        android:background="@android:color/black"/>
 </RelativeLayout>
