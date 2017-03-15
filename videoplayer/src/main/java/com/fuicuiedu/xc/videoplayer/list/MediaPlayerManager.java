@@ -89,6 +89,7 @@ public class MediaPlayerManager {
             }
         });
     }
+
     //释放Mediaplayer
     public void onPause(){
         stopPlayer();
@@ -130,7 +131,7 @@ public class MediaPlayerManager {
         //判断当前是否有视频播放
         if (videoId == null) return;
         //通知UI更新
-        for (OnPlaybackListener listener : OnPlaybackListener){
+        for (OnPlaybackListener listener : onPlaybackListeners){
             listener.onStopPlay(videoId);
         }
         //停止播放，并且重置
@@ -141,10 +142,39 @@ public class MediaPlayerManager {
     }
 
     //添加播放处理的监听（UI层的callback）
-    public void addPlayerBackListener(){}
+    public void addPlayerBackListener(OnPlaybackListener listener){
+        onPlaybackListeners.add(listener);
+    }
     //移除监听
-    public void removeAllListeners(){}
+    public void removeAllListeners(){
+        onPlaybackListeners.clear();
+    }
 
+    //调整更改视频尺寸
+    private void changeVideoSize(int width, int height) {
+        //通知UI更新
+        for (OnPlaybackListener listener : onPlaybackListeners){
+            listener.onSizeMeasured(videoId,width,height);
+        }
+    }
+    //缓冲开始,更新UI
+    private void startBuffering() {
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+        }
+        //通知UI更新
+        for (OnPlaybackListener listener : onPlaybackListeners){
+            listener.onStartBuffering(videoId);
+        }
+    }
+    //缓冲结束的方法
+    private void endBuffering() {
+        mediaPlayer.start();
+        //通知UI更新
+        for (OnPlaybackListener listener : onPlaybackListeners){
+            listener.onStopBuffering(videoId);
+        }
+    }
 
     //视图接口
     //在视频播放模块（videoplayer）完成播放处理，视图层(app模块)来实现此接口，完成视图层UI更新
