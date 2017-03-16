@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,21 @@ import android.widget.EditText;
 import com.fuicuiedu.xc.videonew_20170309.R;
 import com.fuicuiedu.xc.videonew_20170309.commons.ToastUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by Administrator on 2017/3/15 0015.
@@ -48,6 +58,7 @@ public class LoginFragment extends DialogFragment{
 
     @OnClick(R.id.btnLogin)
     public void onClick(){
+        Log.e("okhttp","点击了！");
         String username = mEtUsername.getText().toString();
         String password = mEtPassword.getText().toString();
         //用户名和密码不能为空
@@ -57,6 +68,36 @@ public class LoginFragment extends DialogFragment{
         }
 
         // TODO: 2017/3/15 0015 登录的网络请求
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .get()
+                .url("https://api.bmob.cn/1/login" + "?"
+                        +"username=" + username + "&"
+                        +"password=" + password)
+                //用于让bomb服务器，区分是哪一个应用
+                .addHeader("X-Bmob-Application-Id", "623aaef127882aed89b9faa348451da3")
+                //用于授权
+                .addHeader("X-Bmob-REST-API-Key", "c00104962a9b67916e8cbcb9157255de")
+                //请求和响应统一使用json格式
+                .addHeader("Content-Type","application/json")
+                .build();
+//        "https://api.bmob.cn/1/login?username=aaa&password=bbb"
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("okhttp","连接失败");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()){
+                    Log.e("okhttp","登陆成功");
+                }else{
+                    Log.e("okhttp","登陆失败");
+                }
+            }
+        });
 
 
     }
