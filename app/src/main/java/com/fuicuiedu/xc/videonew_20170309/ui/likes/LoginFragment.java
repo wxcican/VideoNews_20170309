@@ -18,6 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 /**
  * Created by Administrator on 2017/3/15 0015.
@@ -55,6 +57,8 @@ public class LoginFragment extends DialogFragment{
         }
 
         // TODO: 2017/3/15 0015 登录的网络请求
+
+
     }
 
     @Override
