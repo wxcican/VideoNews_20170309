@@ -16,6 +16,9 @@ import android.widget.EditText;
 import com.fuicuiedu.xc.videonew_20170309.R;
 import com.fuicuiedu.xc.videonew_20170309.commons.ToastUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import butterknife.BindView;
@@ -70,10 +73,18 @@ public class RegisterFragment extends DialogFragment {
         OkHttpClient okHttpClient = new OkHttpClient();
 
         //构建一个请求的请求体（根据服务器要求）
-        RequestBody requestBody = new FormBody.Builder()
-                .add("username",username)
-                .add("password",password)
-                .build();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("username",username);
+            jsonObject.put("password",password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String json = jsonObject.toString();
+
+        RequestBody requestBody = RequestBody.create(null,json);
+
+
 
         //要构建一个请求，（
         Request request = new Request.Builder()
@@ -100,12 +111,13 @@ public class RegisterFragment extends DialogFragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.e("okhttp","请求失败,响应码 = " +response.code());
-                Log.e("okhttp","请求失败,响应体 = " +response.body().string());
 //              判断是否请求成功（响应码=200 -- 299）
                 if (response.isSuccessful()){
 //              拿到响应体（解析，并展示）
                     Log.e("okhttp","请求成功");
+                }else{
+                    Log.e("okhttp","请求失败,响应码 = " +response.code());
+                    Log.e("okhttp","请求失败,响应体 = " +response.body().string());
                 }
             }
         });
