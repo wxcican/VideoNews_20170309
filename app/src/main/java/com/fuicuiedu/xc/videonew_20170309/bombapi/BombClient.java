@@ -1,5 +1,8 @@
 package com.fuicuiedu.xc.videonew_20170309.bombapi;
 
+import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.UserEntity;
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,14 +44,9 @@ public class BombClient {
 
     public Call register(String username, String password){
         //构建一个请求的请求体（根据服务器要求）
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("username",username);
-            jsonObject.put("password",password);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String json = jsonObject.toString();
+        //Gson 是一个用来生成，解析json数据的第三方库
+        //生成，可以将一个类，生成为一串json格式的数据
+        String json = new Gson().toJson(new UserEntity(username,password));
 
         RequestBody requestBody = RequestBody.create(null,json);
 
