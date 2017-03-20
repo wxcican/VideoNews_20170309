@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.fuicuiedu.xc.videonew_20170309.R;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.BombClient;
 import com.fuicuiedu.xc.videonew_20170309.commons.ToastUtils;
 
 import org.json.JSONException;
@@ -67,30 +68,18 @@ public class LoginFragment extends DialogFragment{
             return;
         }
 
-        // TODO: 2017/3/15 0015 登录的网络请求
+        //登录的网络请求
+        Call call = BombClient.getInstance().login(username,password);
 
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .get()
-                .url("https://api.bmob.cn/1/login" + "?"
-                        +"username=" + username + "&"
-                        +"password=" + password)
-                //用于让bomb服务器，区分是哪一个应用
-                .addHeader("X-Bmob-Application-Id", "623aaef127882aed89b9faa348451da3")
-                //用于授权
-                .addHeader("X-Bmob-REST-API-Key", "c00104962a9b67916e8cbcb9157255de")
-                //请求和响应统一使用json格式
-                .addHeader("Content-Type","application/json")
-                .build();
-//        "https://api.bmob.cn/1/login?username=aaa&password=bbb"
-        okHttpClient.newCall(request).enqueue(new Callback() {
+        call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+
                 Log.e("okhttp","连接失败");
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+
                 if (response.isSuccessful()){
                     Log.e("okhttp","登陆成功");
                 }else{
