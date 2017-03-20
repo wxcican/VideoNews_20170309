@@ -74,17 +74,9 @@ public class LoginFragment extends DialogFragment{
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
-                Log.e("okhttp","连接失败");
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-
-                if (response.isSuccessful()){
-                    Log.e("okhttp","登陆成功");
-                }else{
-                    Log.e("okhttp","登陆失败");
-                }
             }
         });
 

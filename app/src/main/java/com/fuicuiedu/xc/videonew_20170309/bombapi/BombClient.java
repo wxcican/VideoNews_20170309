@@ -7,6 +7,7 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by Administrator on 2017/3/16 0016.
@@ -25,7 +26,15 @@ public class BombClient {
     private OkHttpClient okHttpClient;
 
     private BombClient(){
-        okHttpClient = new OkHttpClient();
+        //构建“日志拦截器”
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        //设置“日志拦截器”的拦截级别
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        okHttpClient = new OkHttpClient.Builder()
+                //添加日志拦截器
+                .addInterceptor(httpLoggingInterceptor)
+                .build();
     }
 
     public Call register(String username, String password){
