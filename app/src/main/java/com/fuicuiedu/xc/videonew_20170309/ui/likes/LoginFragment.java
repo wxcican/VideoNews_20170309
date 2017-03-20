@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.IDN;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +34,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 /**
@@ -73,18 +75,21 @@ public class LoginFragment extends DialogFragment{
 
         //登录的网络请求
         UserApi userApi = BombClient.getInstance().getUserApi();
-        Call call = userApi.login(username,password);
-        call.enqueue(new retrofit2.Callback() {
+        Call<UserResult> call = userApi.login(username,password);
+        call.enqueue(new retrofit2.Callback<UserResult>() {
             @Override
-            public void onResponse(Call call, retrofit2.Response response) {
-                ToastUtils.showShort("连接成功");
+            public void onResponse(Call<UserResult> call, retrofit2.Response<UserResult> response) {
+                UserResult userResult = response.body();
+                ToastUtils.showShort("Id = " + userResult.getObjectId());
+                //添加完转换器后，Gson直接帮我们吧ResponseBody，转换为了我们想要一个结果类（放到泛型中）
             }
 
             @Override
-            public void onFailure(Call call, Throwable t) {
-                ToastUtils.showShort("连接失败");
+            public void onFailure(Call<UserResult> call, Throwable t) {
+
             }
         });
+
     }
 
     @Override

@@ -12,6 +12,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Administrator on 2017/3/16 0016.
@@ -48,6 +49,8 @@ public class BombClient {
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)//目的是使用okhttpclient身上的拦截器
                 .baseUrl("https://api.bmob.cn/")
+                //添加转换器
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 

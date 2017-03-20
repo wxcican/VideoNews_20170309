@@ -15,6 +15,8 @@ import android.widget.EditText;
 
 import com.fuicuiedu.xc.videonew_20170309.R;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.BombClient;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.UserApi;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.UserEntity;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.result.UserResult;
 import com.fuicuiedu.xc.videonew_20170309.commons.ToastUtils;
 import com.google.gson.Gson;
@@ -27,13 +29,9 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Administrator on 2016/12/21 0021.
@@ -70,40 +68,20 @@ public class RegisterFragment extends DialogFragment {
         }
 
         //注册的网络请求
-        Call call = BombClient.getInstance().register(username,password);
-        call.enqueue(new Callback() {
+        UserApi userApi = BombClient.getInstance().getUserApi();
+        Call<UserResult> call =  userApi.register(new UserEntity(username,password));
+        call.enqueue(new Callback<UserResult>() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                //没有网络，或者网络连接超时
-                //这是后台线程！！！
+            public void onResponse(Call<UserResult> call, Response<UserResult> response) {
+                UserResult userResult = response.body();
+                ToastUtils.showShort("id = " + userResult.getObjectId());
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                //网络连接成功
-                //这是后台线程！！！
+            public void onFailure(Call<UserResult> call, Throwable t) {
 
-                if (response.isSuccessful()){
-                    Log.e("okhttp","请求成功，响应码200-299");
-
-                    //拿到响应体的json格式的字符串
-                    String json = response.body().string();
-
-                    //Gson 是一个用来生成，解析json数据的第三方库
-                    //生成，可以将一个类（实体类），生成为一串json格式的数据
-                    //解析，将一串json格式的数据，生成为一个类（结果类）
-                    UserResult userResult = new Gson().fromJson(json,UserResult.class);
-                    Log.e("okhttp","objectId = " + userResult.getObjectId());
-
-
-
-
-                }else{
-                    Log.e("okhttp","请求失败，响应码 = " + response.code());
-                }
             }
         });
-
     }
 
 }
