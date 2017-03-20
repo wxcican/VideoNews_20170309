@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fuicuiedu.xc.videonew_20170309.R;
+import com.fuicuiedu.xc.videonew_20170309.UserManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,7 +21,7 @@ import butterknife.OnClick;
  * Created by Administrator on 2017/3/15 0015.
  */
 
-public class LikesFragment extends Fragment{
+public class LikesFragment extends Fragment implements RegisterFragment.OnRegisterSuccessListener,LoginFragment.OnLoginSuccessListener{
 
     @BindView(R.id.tvUsername)
     TextView mTvUsername;
@@ -35,8 +36,8 @@ public class LikesFragment extends Fragment{
 
     private View view;
 
-    private LoginFragment loginfragment;
-    private RegisterFragment registerfragment;
+    private LoginFragment mLoginFragment;
+    private RegisterFragment mRegisterFragment;
 
     @Nullable
     @Override
@@ -44,7 +45,11 @@ public class LikesFragment extends Fragment{
         if (view == null){
             view = inflater.inflate(R.layout.fragment_likes,container,false);
             ButterKnife.bind(this,view);
-            // TODO: 2017/3/15 0015 判断用户登录信息，如果已登录，则自动登录
+            //判断用户登录状态，更新UI
+            UserManager userManager = UserManager.getInstance();
+            if (!userManager.isOffline()){
+                userOnLine(userManager.getUsername(),userManager.getObjectId());
+            }
         }
         return view;
     }
@@ -54,22 +59,71 @@ public class LikesFragment extends Fragment{
         switch (view.getId()){
             //注册
             case R.id.btnRegister:
-                if (registerfragment == null){
-                    registerfragment = new RegisterFragment();
+                if (mRegisterFragment == null){
+                    mRegisterFragment = new RegisterFragment();
+                    //添加注册成功的监听
+                    mRegisterFragment.setListener(this);
                 }
-                registerfragment.show(getChildFragmentManager(),"Register Dialog");
+                mRegisterFragment.show(getChildFragmentManager(),"Register Dialog");
                 break;
             //登录
             case R.id.btnLogin:
-                if (loginfragment == null){
-                    loginfragment = new LoginFragment();
+                if (mLoginFragment == null){
+                    mLoginFragment = new LoginFragment();
+                    mLoginFragment.setListener(this);
                 }
-                loginfragment.show(getChildFragmentManager(),"Login Dialog");
+                mLoginFragment.show(getChildFragmentManager(),"Login Dialog");
                 break;
             //退出登录
             case R.id.btnLogout:
-                Toast.makeText(getContext(), "退出登录（待实现）", Toast.LENGTH_SHORT).show();
+                //用户下线
+                userOffline();
                 break;
         }
     }
+
+    //添加注册成功的监听
+    @Override
+    public void registerSuccess(String username, String objectId) {
+        //关闭注册的对话框
+        mRegisterFragment.dismiss();
+        //用户上线
+        userOnLine(username,objectId);
+    }
+
+    //登录成功
+    @Override
+    public void loginSuccess(String username, String objectId) {
+        mLoginFragment.dismiss();
+        //用户上线
+        userOnLine(username,objectId);
+    }
+
+    //用户上线
+    private void userOnLine(String username,String objectId){
+        //更新UI
+        mBtnLogin.setVisibility(View.INVISIBLE);
+        mBtnRegister.setVisibility(View.INVISIBLE);
+        mBtnLogout.setVisibility(View.VISIBLE);
+        mDivider.setVisibility(View.INVISIBLE);
+        mTvUsername.setText(username);
+        // 存储用户信息
+        UserManager.getInstance().setUsername(username);
+        UserManager.getInstance().setObjectId(objectId);
+        //todo 刷新收藏列表
+    }
+
+    //用户下线
+    private void userOffline(){
+        //清除用户相关信息
+        UserManager.getInstance().clear();
+        //更新UI
+        mBtnLogin.setVisibility(View.VISIBLE);
+        mBtnRegister.setVisibility(View.VISIBLE);
+        mBtnLogout.setVisibility(View.INVISIBLE);
+        mDivider.setVisibility(View.VISIBLE);
+        mTvUsername.setText(R.string.tourist);
+        //todo 清空收藏列表
+    }
+
 }
