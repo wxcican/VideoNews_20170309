@@ -14,7 +14,10 @@ import android.widget.EditText;
 
 import com.fuicuiedu.xc.videonew_20170309.R;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.BombClient;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.UserApi;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.result.UserResult;
 import com.fuicuiedu.xc.videonew_20170309.commons.ToastUtils;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,12 +28,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Call;
 
 /**
  * Created by Administrator on 2017/3/15 0015.
@@ -69,18 +72,19 @@ public class LoginFragment extends DialogFragment{
         }
 
         //登录的网络请求
-        Call call = BombClient.getInstance().login(username,password);
-
-        call.enqueue(new Callback() {
+        UserApi userApi = BombClient.getInstance().getUserApi();
+        Call call = userApi.login(username,password);
+        call.enqueue(new retrofit2.Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onResponse(Call call, retrofit2.Response response) {
+                ToastUtils.showShort("连接成功");
             }
+
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onFailure(Call call, Throwable t) {
+                ToastUtils.showShort("连接失败");
             }
         });
-
-
     }
 
     @Override

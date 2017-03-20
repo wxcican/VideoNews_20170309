@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
 
 /**
  * Created by Administrator on 2017/3/16 0016.
@@ -27,6 +28,8 @@ public class BombClient {
     }
 
     private OkHttpClient okHttpClient;
+    private Retrofit retrofit;
+    private UserApi userApi;
 
     private BombClient(){
         //构建“日志拦截器”
@@ -40,7 +43,39 @@ public class BombClient {
                 //添加日志拦截器
                 .addInterceptor(httpLoggingInterceptor)
                 .build();
+
+
+        retrofit = new Retrofit.Builder()
+                .client(okHttpClient)//目的是使用okhttpclient身上的拦截器
+                .baseUrl("https://api.bmob.cn/")
+                .build();
     }
+
+    //拿到UserApi
+    public UserApi getUserApi(){
+        if (userApi == null){
+            userApi = retrofit.create(UserApi.class);
+        }
+        return userApi;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public Call register(String username, String password){
         //构建一个请求的请求体（根据服务器要求）
@@ -69,9 +104,4 @@ public class BombClient {
 
         return okHttpClient.newCall(request);
     }
-
-
-
-
-
 }
