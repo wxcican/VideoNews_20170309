@@ -1,11 +1,16 @@
 package com.fuicuiedu.xc.videonew_20170309.bombapi;
 
+import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.CommentsEntity;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.NewsEntity;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.PublishEntity;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.other.InQuery;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.result.CommentsResult;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.result.QueryResult;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -20,6 +25,17 @@ public interface NewsApi {
             @Query("limit") int limit,
             @Query("skip") int skip);
 
+    //获取新闻的所有评论，按时间从新到旧来排序
+    //注意，我们希望评论作者不仅返回objectId，还返回username，可以使用URL编码参数include=author
+    @GET("1/classes/Comments?include=author&order=-createdAt")
+    Call<QueryResult<CommentsEntity>> getComments(
+            @Query("limit") int limit,
+            @Query("skip") int skip,
+            @Query("where") InQuery where);
+
+    //发表评论
+    @POST("1/classes/Comments")
+    Call<CommentsResult> postComments(@Body PublishEntity publishEntity);
 
     //获取收藏列表
     @GET("1/classes/News?order=-createdAt")

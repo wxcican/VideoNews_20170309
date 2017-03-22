@@ -15,6 +15,7 @@ import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.NewsEntity;
 import com.fuicuiedu.xc.videonew_20170309.commons.CommonUtils;
 import com.fuicuiedu.xc.videonew_20170309.commons.ToastUtils;
 import com.fuicuiedu.xc.videonew_20170309.ui.base.BaseItemView;
+import com.fuicuiedu.xc.videonew_20170309.ui.news.comments.CommentActivity;
 import com.fuicuiedu.xc.videoplayer.list.MediaPlayerManager;
 import com.squareup.picasso.Picasso;
 
@@ -81,8 +82,8 @@ public class NewsItemView extends BaseItemView<NewsEntity> implements
     //点击时间，跳转到评论页面
     @OnClick(R.id.tvCreatedAt)
     public void onClick(){
-        //// TODO: 2017/3/22 0022 跳转到评论页面
-        ToastUtils.showShort("跳转到评论页面");
+        //跳转到评论页面
+        CommentActivity.open(getContext(),newsEntity);
     }
 
     //点击预览图，开始播放

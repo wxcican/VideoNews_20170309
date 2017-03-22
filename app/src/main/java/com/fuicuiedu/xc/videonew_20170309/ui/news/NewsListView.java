@@ -28,7 +28,7 @@ public class NewsListView extends BaseResourceView<NewsEntity,NewsItemView>{
 
     @Override
     protected Call<QueryResult<NewsEntity>> queryData(int limit, int skip) {
-        return newsApi.getVideoNewsList(limit,skip);
+        return newsApi.getVideoNewsList(limit, skip);
     }
 
     @Override
