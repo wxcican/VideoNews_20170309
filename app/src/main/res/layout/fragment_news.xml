@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.fuicuiedu.idedemo.videonews.ui.news.NewsListView
+    <com.fuicuiedu.xc.videonew_20170309.ui.news.NewsListView
         android:id="@+id/newsListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

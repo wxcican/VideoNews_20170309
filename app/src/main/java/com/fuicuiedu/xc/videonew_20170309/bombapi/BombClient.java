@@ -49,7 +49,7 @@ public class BombClient {
 
         //让gson能够将bomb返回的时间戳自动转换为Date对象
         Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-mm-dd HH:mm:ss")
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create();
 
         retrofit = new Retrofit.Builder()
