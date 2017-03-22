@@ -21,7 +21,7 @@ import butterknife.OnClick;
  * Created by Administrator on 2017/3/15 0015.
  */
 
-public class LikesFragment extends Fragment implements RegisterFragment.OnRegisterSuccessListener,LoginFragment.OnLoginSuccessListener{
+public class LikesFragment extends Fragment implements RegisterFragment.OnRegisterSuccessListener, LoginFragment.OnLoginSuccessListener {
 
     @BindView(R.id.tvUsername)
     TextView mTvUsername;
@@ -33,6 +33,8 @@ public class LikesFragment extends Fragment implements RegisterFragment.OnRegist
     Button mBtnLogout;
     @BindView(R.id.divider)
     View mDivider;
+    @BindView(R.id.likesListView)
+    LikesListView likesListView;
 
     private View view;
 
@@ -42,37 +44,37 @@ public class LikesFragment extends Fragment implements RegisterFragment.OnRegist
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (view == null){
-            view = inflater.inflate(R.layout.fragment_likes,container,false);
-            ButterKnife.bind(this,view);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_likes, container, false);
+            ButterKnife.bind(this, view);
             //判断用户登录状态，更新UI
             UserManager userManager = UserManager.getInstance();
-            if (!userManager.isOffline()){
-                userOnLine(userManager.getUsername(),userManager.getObjectId());
+            if (!userManager.isOffline()) {
+                userOnLine(userManager.getUsername(), userManager.getObjectId());
             }
         }
         return view;
     }
 
-    @OnClick({R.id.btnRegister,R.id.btnLogin,R.id.btnLogout})
-    public void onClick(View view){
-        switch (view.getId()){
+    @OnClick({R.id.btnRegister, R.id.btnLogin, R.id.btnLogout})
+    public void onClick(View view) {
+        switch (view.getId()) {
             //注册
             case R.id.btnRegister:
-                if (mRegisterFragment == null){
+                if (mRegisterFragment == null) {
                     mRegisterFragment = new RegisterFragment();
                     //添加注册成功的监听
                     mRegisterFragment.setListener(this);
                 }
-                mRegisterFragment.show(getChildFragmentManager(),"Register Dialog");
+                mRegisterFragment.show(getChildFragmentManager(), "Register Dialog");
                 break;
             //登录
             case R.id.btnLogin:
-                if (mLoginFragment == null){
+                if (mLoginFragment == null) {
                     mLoginFragment = new LoginFragment();
                     mLoginFragment.setListener(this);
                 }
-                mLoginFragment.show(getChildFragmentManager(),"Login Dialog");
+                mLoginFragment.show(getChildFragmentManager(), "Login Dialog");
                 break;
             //退出登录
             case R.id.btnLogout:
@@ -88,7 +90,7 @@ public class LikesFragment extends Fragment implements RegisterFragment.OnRegist
         //关闭注册的对话框
         mRegisterFragment.dismiss();
         //用户上线
-        userOnLine(username,objectId);
+        userOnLine(username, objectId);
     }
 
     //登录成功
@@ -96,11 +98,11 @@ public class LikesFragment extends Fragment implements RegisterFragment.OnRegist
     public void loginSuccess(String username, String objectId) {
         mLoginFragment.dismiss();
         //用户上线
-        userOnLine(username,objectId);
+        userOnLine(username, objectId);
     }
 
     //用户上线
-    private void userOnLine(String username,String objectId){
+    private void userOnLine(String username, String objectId) {
         //更新UI
         mBtnLogin.setVisibility(View.INVISIBLE);
         mBtnRegister.setVisibility(View.INVISIBLE);
@@ -110,11 +112,12 @@ public class LikesFragment extends Fragment implements RegisterFragment.OnRegist
         // 存储用户信息
         UserManager.getInstance().setUsername(username);
         UserManager.getInstance().setObjectId(objectId);
-        //todo 刷新收藏列表
+        //刷新收藏列表
+        likesListView.autoRefresh();
     }
 
     //用户下线
-    private void userOffline(){
+    private void userOffline() {
         //清除用户相关信息
         UserManager.getInstance().clear();
         //更新UI
@@ -123,7 +126,8 @@ public class LikesFragment extends Fragment implements RegisterFragment.OnRegist
         mBtnLogout.setVisibility(View.INVISIBLE);
         mDivider.setVisibility(View.VISIBLE);
         mTvUsername.setText(R.string.tourist);
-        //todo 清空收藏列表
+        //清空收藏列表
+        likesListView.clear();
     }
 
 }

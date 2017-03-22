@@ -2,6 +2,7 @@ package com.fuicuiedu.xc.videonew_20170309.bombapi;
 
 import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.UserEntity;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,12 +47,16 @@ public class BombClient {
                 .addInterceptor(httpLoggingInterceptor)
                 .build();
 
+        //让gson能够将bomb返回的时间戳自动转换为Date对象
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-mm-dd HH:mm:ss")
+                .create();
 
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)//目的是使用okhttpclient身上的拦截器
                 .baseUrl("https://api.bmob.cn/")
                 //添加转换器
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 
