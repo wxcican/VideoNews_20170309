@@ -4,6 +4,7 @@ import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.CommentsEntity;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.NewsEntity;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.PublishEntity;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.other.InQuery;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.result.CollectResult;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.result.CommentsResult;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.result.QueryResult;
 
@@ -43,6 +44,13 @@ public interface NewsApi {
             @Query("limit") int limit,
             @Query("skip") int skip,
             @Query("where") InQuery where
+    );
+
+    //收藏新闻
+    @GET("bef74a37a08d3205/changeLike?action=like")
+    Call<CollectResult> collectNews(
+            @Query("newsId") String newsId,
+            @Query("userId") String userId
     );
 
 }

@@ -12,13 +12,19 @@ import android.widget.TextView;
 
 import com.fuicuiedu.xc.videonew_20170309.R;
 import com.fuicuiedu.xc.videonew_20170309.UserManager;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.BombClient;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.NewsApi;
 import com.fuicuiedu.xc.videonew_20170309.bombapi.entity.NewsEntity;
+import com.fuicuiedu.xc.videonew_20170309.bombapi.result.CollectResult;
 import com.fuicuiedu.xc.videonew_20170309.commons.CommonUtils;
 import com.fuicuiedu.xc.videonew_20170309.commons.ToastUtils;
 import com.fuicuiedu.xc.videoplayer.part.SimpleVideoPlayer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -101,8 +107,11 @@ public class CommentActivity extends AppCompatActivity {
         }
         //收藏
         if (item.getItemId() == R.id.menu_item_like){
-            // TODO: 2017/3/22 0022 收藏
-            ToastUtils.showShort("收藏，待实现");
+            String newsId = newsEntity.getObjectId();
+            String userId = UserManager.getInstance().getObjectId();
+            NewsApi newsApi_cloud = BombClient.getInstance().getNewsApi_cloud();
+            Call<CollectResult> call = newsApi_cloud.collectNews(newsId,userId);
+            call.enqueue(callback);
         }
         //评论
         if (item.getItemId() == R.id.menu_item_comment){
@@ -116,6 +125,23 @@ public class CommentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     // #########################  toolbar相关  ############################
+
+    private Callback<CollectResult> callback = new Callback<CollectResult>() {
+        @Override
+        public void onResponse(Call<CollectResult> call, Response<CollectResult> response) {
+            CollectResult result = response.body();
+            if (result.isSuccess()){
+                ToastUtils.showShort(R.string.like_success);
+            }else{
+                ToastUtils.showShort(R.string.like_failure + result.getError());
+            }
+        }
+
+        @Override
+        public void onFailure(Call<CollectResult> call, Throwable t) {
+            ToastUtils.showShort(t.getMessage());
+        }
+    };
 
     EditCommentFragment.OnCommentSuccessListener listener =new EditCommentFragment.OnCommentSuccessListener() {
         @Override
