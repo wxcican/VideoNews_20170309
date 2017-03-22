@@ -31,6 +31,7 @@ public class BombClient {
     private OkHttpClient okHttpClient;
     private Retrofit retrofit;
     private UserApi userApi;
+    private NewsApi newsApi;
 
     private BombClient(){
         //构建“日志拦截器”
@@ -60,6 +61,14 @@ public class BombClient {
             userApi = retrofit.create(UserApi.class);
         }
         return userApi;
+    }
+
+    //拿到NewsApi
+    public NewsApi getNewsApi(){
+        if (newsApi == null){
+            newsApi = retrofit.create(NewsApi.class);
+        }
+        return newsApi;
     }
 
 
