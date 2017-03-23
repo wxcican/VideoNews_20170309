@@ -62,6 +62,12 @@ public class LocalVideoFragment extends Fragment implements LoaderManager.Loader
         unbinder.unbind();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        adapter.release();//关闭线程池
+    }
+
     //  ###########################   loader回调   ##################
     //创建所需loader对象
     @Override
